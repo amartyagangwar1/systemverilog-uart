@@ -5,7 +5,8 @@ module uart_tx #(parameter int count = 8)(
     input logic rst,
     input logic start,
     input logic tick_baud,
-    input logic [count-1:0] data_in);
+    input logic [count-1:0] data_in,
+    output logic tx);
 
     //state declaration using enum
     typedef enum logic [1:0] {IDLE, START, DATA, STOP} state_t;
@@ -19,7 +20,7 @@ module uart_tx #(parameter int count = 8)(
             current_state <= next_state;
     end
 
-    //next state logic
+    //next state logic & 
     always_comb begin
         next_state = current_state; //default
         case (current_state)
@@ -54,13 +55,35 @@ module uart_tx #(parameter int count = 8)(
                 countValue <= 0;
             end else
                 countValue <= countValue + 1;
+        end else if (current_state != DATA) begin
+            countValue <=0;
         end
-        else
-            countValue <= 0;
     end
-    
+
     //shift register logic to transmit data
-    always_ff @(posedge clk) begin        
+    logic [count - 1:0] shift_reg;
+    always_ff @(posedge clk) begin
+        if(rst) begin
+            shift_reg <=0;
+        end else if(current_state == IDLE && start == 1) begin
+            shift_reg <= data_in;
+        end else if(current_state == DATA && tick_baud == 1) begin
+            shift_reg <= shift_reg >> 1;
+        end
     end
-    
+
+    //block to assign tx output
+    always_comb begin
+        tx = 1;
+        if(current_state == IDLE || current_state == STOP) begin
+            tx = 1;
+        end else if(current_state == START) begin
+            tx = 0;
+        end else if(current_state == DATA) begin
+            tx = shift_reg[0];
+        end
+    end
+
+
+
 endmodule
