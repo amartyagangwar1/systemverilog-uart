@@ -7,9 +7,9 @@ A fully parameterized, FSM-based Universal Asynchronous Receiver/Transmitter (UA
 ## Architecture
 
 ```
-         ┌─────────────────────────────────────────────────────────────┐
-         │                        top.sv                               │
-         │                                                             │
+         ┌────────────────────────────────────────────────────────────┐
+         │                        top.sv                              │
+         │                                                            │
          │  ┌───────────┐    tick_baud    ┌──────────┐                │
          │  │           │───────────────►│          │  tx             │
  data_in │  │  baud_gen │                │  uart_tx │─────────┐       │
@@ -20,7 +20,7 @@ A fully parameterized, FSM-based Universal Asynchronous Receiver/Transmitter (UA
          │         │────────────────────►│          │◄────────┘       │
          │         │────────────────────►│  uart_rx │  rx             │
          │                  tick_rx      │          │                 │
-         │                              └──────────┘                 │
+         │                              └──────────┘                  │
          │                                   │  data_out, data_valid  │
          └───────────────────────────────────┼────────────────────────┘
                                              ▼
