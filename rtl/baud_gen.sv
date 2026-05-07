@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module baud_gen #(parameter int CLK_FREQ = 100000000, parameter int BAUD_RATE = 115200)
-                 (input logic clk, input logic rst, output logic tick_baud);
+                 (input logic clk, input logic rst, output logic tick_baud, output logic tick_rx);
 
     localparam int DIV = CLK_FREQ / BAUD_RATE; //Number of clock cycles per baud tick
 
@@ -17,12 +17,18 @@ module baud_gen #(parameter int CLK_FREQ = 100000000, parameter int BAUD_RATE = 
         if(rst) begin //Synchronous Reset
             count <= '0;
             tick_baud <= '0;
+            tick_rx <='0;
         end else if (count == (DIV-1)) begin
             count <= '0;
             tick_baud <= '1;
         end else begin
             count <= count + 1;
             tick_baud <= '0;
+            if (count == ((DIV-1)/2)) begin
+                tick_rx <= '1;
+            end else 
+                tick_rx <='0;
+            
         end
     end
 

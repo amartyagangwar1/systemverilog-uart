@@ -11,7 +11,7 @@ module baud_gen_TB();
     logic tick_baud;
 
     //instantiate dut
-    baud_gen #(.CLK_FREQ(CLK_FREQ), .BAUD_RATE(BAUD_RATE)) dut (.clk(clk), .rst(rst), .tick_baud(tick_baud));
+    baud_gen #(.CLK_FREQ(CLK_FREQ), .BAUD_RATE(BAUD_RATE)) dut (.clk(clk), .rst(rst), .tick_baud(tick_baud), .tick_rx(tick_rx));
 
     //generate clock to be 100 mhz or 10 ns period
     initial clk = 0;

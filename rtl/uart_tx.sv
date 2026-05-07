@@ -46,7 +46,8 @@ module uart_tx #(parameter int count = 8)(
     end
 
     //counter for # of bits being transmitted
-    logic [$clog2(count) - 1:0] countValue;
+    localparam int cw = (count <= 1) ? 1 : $clog2(count) - 1;
+    logic [cw:0] countValue;
     always_ff @(posedge clk) begin
         if(rst)
             countValue <= 0;
