@@ -20,6 +20,7 @@ module baud_gen #(parameter int CLK_FREQ = 100000000, parameter int BAUD_RATE = 
             tick_rx <='0;
         end else if (count == (DIV-1)) begin
             count <= '0;
+            tick_rx <= '0;
             tick_baud <= '1;
         end else begin
             count <= count + 1;
