@@ -25,20 +25,29 @@ module baud_gen_TB();
 
         #0.2ms
         //repeat (5000000000) @(posedge clk);
-        $display("PASSED");
+        // a stuck baud_gen (tick_baud never firing) would otherwise let
+        // the cycle-spacing check below go completely unexercised and
+        // silently report PASSED -- require a real minimum tick count too
+        if (tick_count < 15)
+            $fatal(1, "ERROR: only %0d tick_baud pulses seen in 0.2ms window, expected ~%0d",
+                   tick_count, 200_000 / (DIV*10));
+        $display("PASSED (%0d ticks observed)", tick_count);
         $finish;
     end
 
 
     int cycle_count;
+    int tick_count;
     logic first_tick_seen;
 
     always @(posedge clk) begin
         if(rst) begin
             cycle_count <= 0;
+            tick_count <= 0;
             first_tick_seen <=0;
         end else begin
             if(tick_baud) begin
+                tick_count <= tick_count + 1;
                 if(first_tick_seen) begin
                     //$display("TICK cycles %d, DIV %d", cycle_count, DIV);
                     if(cycle_count + 1 == DIV) begin
